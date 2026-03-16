@@ -1,49 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import TeamCard from '../components/TeamCard';
+import Skeleton from '../components/Skeleton';
+import { dummyTeams } from '../services/dummyData';
 
 const Teams = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Dummy data representing what we'll eventually fetch from the backend
-  const teamsData = [
-    {
-      id: 1,
-      name: "Cyber Sentinels",
-      hackathonName: "Global Cybersecurity Summit",
-      projectIdea: "Building an AI-powered threat detection system for small businesses to prevent ransomware attacks.",
-      requiredSkills: ["Python", "TensorFlow", "FastAPI"],
-      members: [1, 2],
-      membersNeeded: 4,
-      status: "Open"
-    },
-    {
-      id: 2,
-      name: "EcoTrackers",
-      hackathonName: "Green Tech Hack 2024",
-      projectIdea: "A mobile app that tracks personal carbon footprint using IoT data from smart home devices.",
-      requiredSkills: ["React Native", "Node.js", "IoT"],
-      members: [1, 2, 3],
-      membersNeeded: 4,
-      status: "Open"
-    },
-    {
-      id: 3,
-      name: "FinFlow",
-      hackathonName: "Fintech Innovation Week",
-      projectIdea: "Decentralized finance platform for automated micro-lending in emerging markets.",
-      requiredSkills: ["Solidity", "React", "Web3.js"],
-      members: [1, 2],
-      membersNeeded: 3,
-      status: "Open"
-    }
-  ];
+  // Simulate loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const filteredTeams = dummyTeams.filter(team => 
+    team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    team.hackathonName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    team.requiredSkills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
-    <div className="py-8">
+    <div className="py-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Available Teams</h1>
@@ -81,9 +62,34 @@ const Teams = () => {
 
       {/* Teams Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {teamsData.map((team) => (
-          <TeamCard key={team.id} team={team} />
-        ))}
+        {isLoading ? (
+          // Show 6 skeleton cards while loading
+          [...Array(6)].map((_, index) => (
+            <Card key={index} className="p-6 h-[320px] flex flex-col justify-between">
+              <div>
+                <Skeleton variant="rectangular" className="w-20 h-6 mb-4" />
+                <Skeleton variant="text" className="h-8 w-3/4 mb-2" />
+                <Skeleton variant="text" className="w-1/2 mb-4" />
+                <Skeleton variant="text" className="mb-2" />
+                <Skeleton variant="text" className="mb-2" />
+                <Skeleton variant="text" className="w-2/3" />
+              </div>
+              <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                <Skeleton variant="rectangular" className="w-full h-10" />
+              </div>
+            </Card>
+          ))
+        ) : (
+          filteredTeams.length > 0 ? (
+            filteredTeams.map((team) => (
+              <TeamCard key={team.id} team={team} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-20">
+              <p className="text-gray-500 italic text-xl">No teams found matching your search.</p>
+            </div>
+          )
+        )}
       </div>
     </div>
   );
