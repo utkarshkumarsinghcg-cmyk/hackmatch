@@ -1,9 +1,6 @@
 # HackMatch
 
-# Hackathon-Team-Finder-Web-Application   
 
-
-# Problem Statement: Hackathon Team Finder Web Application
 
 ## Overview
 
