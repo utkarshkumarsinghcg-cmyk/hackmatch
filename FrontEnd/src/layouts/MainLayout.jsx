@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const MainLayout = () => {
   return (
@@ -11,12 +12,7 @@ const MainLayout = () => {
         <Outlet />
       </main>
       
-      {/* Footer will go here in Phase 3 */}
-      <footer className="p-4 bg-white dark:bg-gray-800 mt-auto border-t border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} HackMatch. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
