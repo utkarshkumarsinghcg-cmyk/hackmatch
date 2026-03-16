@@ -22,11 +22,14 @@ const Navbar = () => {
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+            <Link to="/login" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">
               Login
             </Link>
             <Link to="/signup" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
               Sign Up
+            </Link>
+            <Link to="/profile" className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 border border-blue-200 dark:border-blue-800 hover:bg-blue-200 transition">
+              <span className="font-bold text-sm">JD</span>
             </Link>
           </div>
           <div className="flex items-center md:hidden">
