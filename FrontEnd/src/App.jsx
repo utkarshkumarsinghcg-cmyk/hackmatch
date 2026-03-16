@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Teams from './pages/Teams';
 import CreateTeam from './pages/CreateTeam';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="teams" element={<Teams />} />
           <Route path="create-team" element={<CreateTeam />} />
+          <Route path="profile" element={<Profile />} />
           {/* Add more routes as we progress through phases */}
         </Route>
       </Routes>
