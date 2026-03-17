@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 
 // Future routes will be added here:
 app.use('/api/auth', require('./routes/authRoutes'));
-// app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/teams', require('./routes/teamRoutes'));
 app.use('/api/join-requests', require('./routes/joinRequestRoutes'));
 
