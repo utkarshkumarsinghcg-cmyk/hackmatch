@@ -6,7 +6,7 @@ import { useAuth } from '../services/AuthContext';
 import './Signup.css';
 
 const Signup = () => {
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
@@ -15,14 +15,26 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    
     setLoading(true);
-    setTimeout(() => {
-      login('dummy-token');
+    const result = await register({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password
+    });
+
+    if (result.success) {
       navigate('/');
-      setLoading(false);
-    }, 1000);
+    } else {
+      alert(result.message);
+    }
+    setLoading(false);
   };
 
   return (

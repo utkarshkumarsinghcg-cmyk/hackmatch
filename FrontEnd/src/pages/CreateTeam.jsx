@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import api from '../services/api';
 import './CreateTeam.css';
 
 const CreateTeam = () => {
@@ -12,13 +14,37 @@ const CreateTeam = () => {
     requiredSkills: ''
   });
 
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Create Team:', formData);
+    setLoading(true);
+    
+    try {
+      // Backend expects: teamName, projectIdea, hackathonName, requiredSkills
+      const skillsArray = formData.requiredSkills.split(',').map(skill => skill.trim()).filter(s => s);
+      
+      const response = await api.post('/teams', {
+        teamName: formData.name,
+        hackathonName: formData.hackathonName,
+        projectIdea: formData.projectIdea,
+        requiredSkills: skillsArray
+        // Note: backend doesn't currently take membersNeeded, so we ignore it or could add it in future
+      });
+
+      if (response.data.success) {
+        navigate('/teams');
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to create team');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -86,7 +112,7 @@ const CreateTeam = () => {
           </div>
 
           <div className="create-team__actions">
-            <Button type="submit" className="create-team__submit" size="md">
+            <Button type="submit" className="create-team__submit" size="md" isLoading={loading}>
               🚀 Post Team Listing
             </Button>
             <Button variant="secondary" className="create-team__cancel" size="md" onClick={() => window.history.back()}>

@@ -15,14 +15,17 @@ const Login = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      login('dummy-token');
+    const result = await login(formData.email, formData.password);
+    
+    if (result.success) {
       navigate('/');
-      setLoading(false);
-    }, 1000);
+    } else {
+      alert(result.message);
+    }
+    setLoading(false);
   };
 
   return (

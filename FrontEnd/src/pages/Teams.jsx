@@ -4,7 +4,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import TeamCard from '../components/TeamCard';
 import Skeleton from '../components/Skeleton';
-import { dummyTeams } from '../services/dummyData';
+import api from '../services/api';
 import './Teams.css';
 
 const Teams = () => {
@@ -12,13 +12,27 @@ const Teams = () => {
   const [skillFilter, setSkillFilter] = useState('All Skills');
   const [isLoading, setIsLoading] = useState(true);
 
+  const [teams, setTeams] = useState([]);
+
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1500);
-    return () => clearTimeout(timer);
+    const fetchTeams = async () => {
+      try {
+        const response = await api.get('/teams');
+        if (response.data.success) {
+          setTeams(response.data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch teams:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTeams();
   }, []);
 
-  const filteredTeams = dummyTeams.filter(team => {
-    const matchesSearch = team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredTeams = teams.filter(team => {
+    const matchesSearch = team.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.hackathonName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.requiredSkills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesSkill = skillFilter === 'All Skills' ||
@@ -99,9 +113,9 @@ const Teams = () => {
             </div>
           ))
         ) : filteredTeams.length > 0 ? (
-          filteredTeams.map((team) => (
-            <TeamCard key={team.id} team={team} />
-          ))
+            filteredTeams.map((team) => (
+              <TeamCard key={team._id} team={team} />
+            ))
         ) : (
           <div className="teams__empty">
             <div className="teams__empty-icon">🔍</div>

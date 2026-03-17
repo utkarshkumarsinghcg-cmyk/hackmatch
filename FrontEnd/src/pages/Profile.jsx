@@ -2,23 +2,43 @@ import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Skeleton from '../components/Skeleton';
-import { dummyUser, dummyTeams } from '../services/dummyData';
 import { useAuth } from '../services/AuthContext';
+import api from '../services/api';
 import './Profile.css';
 
 const Profile = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const [userTeams, setUserTeams] = useState([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1200);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchUserTeams = async () => {
+      try {
+        // In a real app, we might have an endpoint for user teams
+        // For now, let's fetch all teams and filter or rely on a future endpoint
+        const response = await api.get('/teams');
+        if (response.data.success) {
+          // Filter teams where user is a member or creator
+          const filtered = response.data.data.filter(t => 
+            t.createdBy._id === user?._id || t.members.some(m => m._id === user?._id)
+          );
+          setUserTeams(filtered);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user teams:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const user = dummyUser;
-  const userTeams = dummyTeams.filter(team => 
-    user.teamsCreated.includes(team.id) || user.teamsJoined.includes(team.id)
-  );
+    if (user) {
+      fetchUserTeams();
+    }
+  }, [user]);
+
+  if (!user && !isLoading) {
+    return <div className="profile">Please log in to view your profile.</div>;
+  }
 
   return (
     <div className="profile">
@@ -132,15 +152,15 @@ const Profile = () => {
               ))
             ) : userTeams.length > 0 ? (
               userTeams.map(team => (
-                <Card key={team.id} hover className="profile__project-card">
+                <Card key={team._id} hover className="profile__project-card">
                   <div>
-                    <h4 className="profile__project-name">{team.name}</h4>
+                    <h4 className="profile__project-name">{team.teamName}</h4>
                     <p className="profile__project-hackathon">{team.hackathonName}</p>
-                    <p className="profile__project-role">Role: {user.teamsCreated.includes(team.id) ? 'Team Lead' : 'Collaborator'}</p>
+                    <p className="profile__project-role">Role: {team.createdBy._id === user._id ? 'Team Lead' : 'Collaborator'}</p>
                   </div>
                   <div className="profile__project-stats">
                     <div className="profile__project-members">
-                      <p className="profile__project-members-count">{team.members.length}/{team.membersNeeded}</p>
+                      <p className="profile__project-members-count">{team.members.length}</p>
                       <p className="profile__project-members-label">Members</p>
                     </div>
                     <Button variant="secondary" size="sm">Manage</Button>
