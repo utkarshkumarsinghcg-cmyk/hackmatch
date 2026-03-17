@@ -1,42 +1,36 @@
 const mongoose = require('mongoose');
 
 const teamSchema = new mongoose.Schema({
-  name: {
+  teamName: {
     type: String,
-    required: [true, 'Please add a team name']
+    required: [true, 'Please provide a team name'],
+    trim: true,
+    maxlength: [50, 'Team name cannot be more than 50 characters']
   },
   projectIdea: {
     type: String,
-    required: [true, 'Please add a project idea']
+    required: [true, 'Please provide a project idea description'],
+    maxlength: [500, 'Project idea cannot be more than 500 characters']
   },
   hackathonName: {
     type: String,
-    required: [true, 'Please add a hackathon name']
+    required: [true, 'Please provide the target hackathon name'],
+    trim: true
   },
   requiredSkills: {
     type: [String],
+    required: [true, 'Please list at least one required skill'],
     default: []
   },
-  membersNeeded: {
-    type: Number,
-    required: [true, 'Please specify the number of members needed']
-  },
-  admin: {
+  createdBy: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true
   },
-  members: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User'
-    }
-  ],
-  status: {
-    type: String,
-    enum: ['Open', 'Full', 'Completed'],
-    default: 'Open'
-  },
+  members: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'User'
+  }],
   createdAt: {
     type: Date,
     default: Date.now
