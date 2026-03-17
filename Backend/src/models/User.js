@@ -30,21 +30,13 @@ const userSchema = new mongoose.Schema({
     enum: ['Beginner', 'Intermediate', 'Advanced'],
     default: 'Beginner'
   },
-  portfolioLink: {
-    type: String,
-    default: ''
-  },
-  githubLink: {
-    type: String,
-    default: ''
-  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-// Encrypt password using bcrypt
+// Encrypt password using bcrypt before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     next();
